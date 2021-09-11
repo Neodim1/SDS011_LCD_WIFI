@@ -18,14 +18,14 @@
  #include <LiquidCrystal_I2C.h>
  #include <Wire.h> 
  LiquidCrystal_I2C lcd(0x27,16,2); // Check I2C address of LCD, normally 0x27 or 0x3F
- uint8_t symbol[8] = {B00000, B10000, B01000, B00100, B00010, B00001, B00000, B00000};  // черточа прогресса
+ uint8_t symbol[8] = {B00000, B10000, B01000, B00100, B00010, B00001, B00000, B00000};  // черточка прогресса
   
  
  int rxPin = 5;  //D1
  int txPin = 4;  //D2
  int powerPin = 12;   // D6 - пин управления p-мосфетом, включения дисплея и SDS011
  int wifiPin = 13;  // D7 - пин кнопки включения wifi
- int voltagePin = A0; // A0 - чтение напряжения батареи, делитель изменен!
+ int voltagePin = A0; // A0 - чтение напряжения батареи, делитель изменен! (см описание)
  int displayPin = 14; // D5 - пин включенного дисплея, без высокого уровня  на этом пине задержек при выводе на дисплей нет, уменьшаем энергопотребление
  int continuousPin = 3; // RX - пин измерений раз в секунду, без wifi и thingspeak
  
@@ -83,7 +83,7 @@
    Serial.println(sds.setQueryReportingMode().toString()); // ensures sensor is in 'query' reporting mode
    if (digitalRead(continuousPin) == LOW){
     delay(1000);
-    lcd.clear(); // автоматически уст курсор в 0,0
+    lcd.clear(); 
     lcd.print("1 second");
     lcd.setCursor(0,1);
     lcd.print("   continuous...");
@@ -94,14 +94,14 @@
    for ( byte n = 0; n <= 20; n++ ) {
     progress();
     Serial.print(n);
-    Serial.print(","); // waiting 15 seconds before measuring /-\|
+    Serial.print(","); // waiting 5 seconds before measuring
    }
 
 next:
    PmResult pm = sds.queryPm();
    if (pm.isOk()) {
      Serial.println();
-     Serial.println(pm.toString());   // if you want to just print the measured values, you can use toString() method as well
+     Serial.println(pm.toString());   
      }else {
           Serial.print("Could not read values from sensor, reason: ");
           Serial.println(pm.statusToString());
@@ -111,7 +111,7 @@ next:
     pm_pm10 = pm.pm10;
 
     if (digitalRead(displayPin) == HIGH){
-      lcd.clear(); // автоматически уст курсор в 0,0
+      lcd.clear(); 
       lcd.print("Pm2.5 = ");
       lcd.print(pm.pm25,1);
       lcd.setCursor(0, 1);
@@ -131,7 +131,7 @@ next:
       delay(1500);
       lcd.begin(0,2);      // In ESP8266-01, SDA=0, SCL=2               
       lcd.backlight();
-      lcd.clear(); // автоматически уст курсор в 0,0
+      lcd.clear(); 
       lcd.print("Power OFF...");
       for ( byte n = 4; n > 1; n--) {
       lcd.setCursor(0,1);
